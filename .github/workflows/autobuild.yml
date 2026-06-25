@@ -1,16 +1,9 @@
 name: Linux build
 
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+on: push
 
 jobs:
   matrix:
-    if: github.repository == 'KallistiOS/kos-ports'
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.setup-matrix.outputs.matrix }}
@@ -25,7 +18,6 @@ jobs:
 
   build:
     needs: matrix
-    if: github.repository == 'KallistiOS/kos-ports'
     runs-on: ubuntu-latest
     container:
       image: docker://pcercuei/dreamcast-toolchain:stable
