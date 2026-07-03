@@ -119,7 +119,7 @@ ${1}/.stamp_installed_manual: $${${2}_BUILD_DEPS}
 ${1}/.stamp_installed: ${1}/.stamp_installed_$${${2}_PORT_BUILD}
 	touch $$@
 
-.PHONY: ${2} clean-${2} rebuild-${2}
+.PHONY: ${2} clean-${2} rebuild-${2} update-${2}
 
 ${2}: $$(if $${${2}_ARCH_SUPPORTED},${1}/.stamp_installed)
 	$$(if $${${2}_ARCH_SUPPORTED},,@echo "${2} is not supported for this platform - skipping.")
@@ -130,6 +130,11 @@ clean-${2}:
 rebuild-${2}: clean-${2} ${2}
 
 .NOTPARALLEL: rebuild-${2}
+
+update-${2}:
+	$$(eval LATEST:=$$(firstword $$(shell git ls-remote ${${2}_GIT_REPO} $$(or ${${2}_GIT_BRANCH},HEAD))))
+	@echo ${2} $$(if $$(findstring ${${2}_GIT_HASH},$${LATEST}),is up to date.,updated to $${LATEST})
+	@sed -i 's/${${2}_GIT_HASH}/$${LATEST}/' ${KOS_PORTS}/${2}/recipe.mk
 
 endef
 
@@ -147,3 +152,5 @@ failed:
 	@echo "Failed packages: ${FAILED_PACKAGES}"
 
 clean: $(foreach p,${ARCH_PACKAGES},clean-${p})
+
+update: $(foreach p,${PACKAGES},$(if ${${p}_GIT_REPO},update-${p}))
