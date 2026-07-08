@@ -99,15 +99,15 @@ ${1}/.stamp_fetched: ${1}/.stamp_$$(if $${${2}_DOWNLOAD_URL},extracted,nodownloa
 
 ${1}/.stamp_installed_autotools: $${${2}_BUILD_DEPS}
 	cd $${${2}_DISTFILE_DIR} ; \
-	${BUILD_ENV} ${PKG_CONFIG_ENV} ./configure $$(if $${${2}_CONFIGURE_NO_CACHE_FILE},,--cache-file=${KOS_PORTS}/config.${KOS_GCCVER}.cache) --prefix="" --host=${KOS_CC_PREFIX} $${${2}_CONFIGURE_ARGS} && \
-	DESTDIR=${KOS_SYSROOT} ${MAKE} $${${2}_MAKE_TARGET} && \
+	${BUILD_ENV} ${PKG_CONFIG_ENV} ./configure $$(if $${${2}_CONFIGURE_NO_CACHE_FILE},,--cache-file=${KOS_PORTS}/config.${KOS_GCCVER}.cache) --prefix="${KOS_SYSROOT}" --host=${KOS_CC_PREFIX} $${${2}_CONFIGURE_ARGS} && \
+	${MAKE} $${${2}_MAKE_TARGET} && \
 	touch $$@
 
 ${1}/.stamp_installed_cmake: $${${2}_BUILD_DEPS}
 	mkdir -p $${${2}_DISTFILE_DIR}/build
 	cd $${${2}_DISTFILE_DIR}/build ; \
-	${BUILD_ENV} kos-cmake -DCMAKE_INSTALL_PREFIX="" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_LIBDIR=lib $${${2}_CMAKE_ARGS} .. && \
-	DESTDIR=${KOS_SYSROOT} cmake --build . -t $${${2}_MAKE_TARGET} && \
+	${BUILD_ENV} kos-cmake -DCMAKE_INSTALL_PREFIX="${KOS_SYSROOT}" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_LIBDIR=lib $${${2}_CMAKE_ARGS} .. && \
+	cmake --build . -t $${${2}_MAKE_TARGET} && \
 	touch $$@
 
 ${1}/.stamp_installed_manual: $${${2}_BUILD_DEPS}
